@@ -1,7 +1,6 @@
 import * as alt from 'alt-client';
 import * as native from 'natives';
 import { TFC_VEHICLE_EVENTS } from '../../shared/events';
-import { OwnedVehicle } from '@AthenaShared/interfaces/vehicleOwned';
 
 let disableFlippingControls = false;
 let everyTickControls: number;
@@ -13,10 +12,16 @@ export class TfcVehicleDamageClient {
     }
 
     static checkRotation(player: alt.Player) {
-        let currentRotation = native.getEntityRoll(player.vehicle.scriptID);
+        if (!alt.Player.local.vehicle.scriptID) {
+            return;
+        }
 
+        let currentRotation = native.getEntityRoll(alt.Player.local.vehicle);
+
+        if (!currentRotation) {
+            return;
+        }
         if (currentRotation > 100 || currentRotation < -100) {
-            //console.log('ROTATION: ', currentRotation);
             disableFlipping(true);
         } else {
             disableFlipping(false);
